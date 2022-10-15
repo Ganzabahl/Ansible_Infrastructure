@@ -6,25 +6,24 @@
     connection: ssh
   
     tasks:
-
-    - name: Install chrony on Suse
+    - name: "Install chrony on Suse"
       zypper:
         name:
           - chrony
         state: latest
   
-    - name: "Make sure the chrony.conf file is correct"
+    - name: "Making sure the chrony.conf file is correct"
       copy:
         src: ./chrony.conf
         dest: /etc/chrony.conf
         owner: root
         group: root
    
-    - name: restart chrony
+    - name: "Restarting chrony"
       service:
         name: chronyd
         state: started
         enabled: yes
 
-    - name: Update all packages on OpenSUSE/SUSE Linux
+    - name: "Updating all packages on OpenSUSE/SUSE Linux"
       zypper: name=* state=latest
