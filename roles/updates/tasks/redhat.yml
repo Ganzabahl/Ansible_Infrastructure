@@ -6,24 +6,24 @@
     connection: ssh
   
     tasks:
-    - name: Installing Chrony
+    - name: "Installing Chrony"
       yum:
         name: 
           - chrony
         state: latest
  
-    - name: "Make sure the chrony.conf file is correct"
+    - name: "Making sure the chrony.conf file is correct"
       copy:
         src: ./chrony.conf
         dest: /etc/chrony.conf
         owner: root
         group: root
  
-    - name: restart chrony
+    - name: "Restarting chrony"
       service:
         name: chronyd
         state: started
         enabled: yes
       
-    - name: upgrade all packages on rhel
+    - name: "Upgrading all packages on RHEL"
       yum: name=* state=latest
