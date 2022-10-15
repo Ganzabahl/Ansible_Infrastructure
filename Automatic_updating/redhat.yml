@@ -1,0 +1,29 @@
+---
+  - name: "Updating managed infrastructure"
+    hosts: all
+    become: true
+    user: ansible
+    connection: ssh
+  
+    tasks:
+    - name: Installing Chrony
+      yum:
+        name: 
+          - chrony
+        state: latest
+ 
+    - name: "Make sure the chrony.conf file is correct"
+      copy:
+        src: ./chrony.conf
+        dest: /etc/chrony.conf
+        owner: root
+        group: root
+ 
+    - name: restart chrony
+      service:
+        name: chronyd
+        state: started
+        enabled: yes
+      
+    - name: upgrade all packages on rhel
+      yum: name=* state=latest
