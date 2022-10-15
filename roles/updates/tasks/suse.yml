@@ -1,0 +1,30 @@
+---
+  - name: "Updating managed infrastructure"
+    hosts: all
+    become: true
+    user: ansible
+    connection: ssh
+  
+    tasks:
+
+    - name: Install chrony on Suse
+      zypper:
+        name:
+          - chrony
+        state: latest
+  
+    - name: "Make sure the chrony.conf file is correct"
+      copy:
+        src: ./chrony.conf
+        dest: /etc/chrony.conf
+        owner: root
+        group: root
+   
+    - name: restart chrony
+      service:
+        name: chronyd
+        state: started
+        enabled: yes
+
+    - name: Update all packages on OpenSUSE/SUSE Linux
+      zypper: name=* state=latest
