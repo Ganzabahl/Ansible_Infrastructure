@@ -1,7 +1,7 @@
 ---
   - name: "Updating managed infrastructure"
     hosts: all
-    become: yes
+    become: true
     user: "{{ user }}"
     connection: ssh
   
