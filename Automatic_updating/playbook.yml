@@ -50,12 +50,17 @@
         enabled: yes
       when: ansible_facts['os_family'] == 'RedHat'
 
-    - name: Update apt repo and cache on all Debian/Ubuntu boxes
-      apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
+    - name: Get all updates on Debian/Ubuntu
+      ansible.builtin.apt:
+        update_cache: true
+        autoremove: true
+        autoclean: true
       when: ansible_facts['os_family'] == 'Debian'
 
-    - name: Upgrade all packages on Debian/Ubuntu servers
-      apt: upgrade=dist force_apt_get=yes
+    - name: Upgrade all packages on Debian/Ubuntu
+      ansible.builtin.apt:
+        name: "*"
+        state: latest
       when: ansible_facts['os_family'] == 'Debian'
       
     - name: upgrade all packages on CentOS
