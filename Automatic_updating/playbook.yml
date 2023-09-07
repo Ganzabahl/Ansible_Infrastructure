@@ -1,7 +1,7 @@
 ---
   - name: "Updating managed infrastructure"
     hosts: all
-    become: true
+    become: yes
     user: ansible
     connection: ssh
   
