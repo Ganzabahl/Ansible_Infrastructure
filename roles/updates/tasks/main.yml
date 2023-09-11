@@ -1,16 +1,16 @@
-- name: Update OS Packages
-  hosts: all
-  become: yes
+  - name: Update OS Packages
+    hosts: all
+    become: yes
 
-  tasks:
-    - name: Run updates on RHEL
-      import_tasks: redhat.yml
-      when: ansible_facts['os_family']|lower == 'redhat'
-    
-    - name: Run updates and check NTP on Debian
-      import_tasks: debian.yml
-      when: ansible_facts['os_family']|lower == 'debian'
+    tasks:
+      - name: Run updates on RHEL
+        import_tasks: redhat.yml
+        when: ansible_facts['os_family']|lower == 'redhat'
       
-    - name: Run updates and check NTP on OpenSUSE
-      import_tasks: suse.yml
-      when: ansible_facts['os_family']|lower == 'suse'
+      - name: Run updates and check NTP on Debian
+        import_tasks: debian.yml
+        when: ansible_facts['os_family']|lower == 'debian'
+      
+      - name: Run updates and check NTP on OpenSUSE
+        import_tasks: suse.yml
+        when: ansible_facts['os_family']|lower == 'suse'
