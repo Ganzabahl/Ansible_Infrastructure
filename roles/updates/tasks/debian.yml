@@ -1,33 +1,25 @@
 ---
-- name: "Updating managed infrastructure"
-  hosts: all
-  become: true
-  user: ansible
-  connection: ssh
+- name: "Installing ntp"
+  apt:
+    pkg:
+      - ntp
+    state: latest
 
-  tasks:
+- name: "Making sure the ntp.conf file is correct"
+  copy:
+    src: ./ntp.conf
+    dest: /etc/ntp.conf
+    owner: root
+    group: root
 
-  - name: "Installing ntp"
-    apt:
-      pkg:
-        - ntp
-      state: latest
+- name: "Restarting ntp"
+  service:
+    name: ntp
+    state: started
+    enabled: yes
 
-  - name: "Making sure the ntp.conf file is correct"
-    copy:
-      src: ./ntp.conf
-      dest: /etc/ntp.conf
-      owner: root
-      group: root
+- name: "Updating apt repo and cache on all Debian/Ubuntu servers"
+  apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
 
-  - name: "Restarting ntp"
-    service:
-      name: ntp
-      state: started
-      enabled: yes
-
-  - name: "Updating apt repo and cache on all Debian/Ubuntu servers"
-    apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
-
-  - name: "Upgrading all packages on Debian/Ubuntu servers"
-    apt: upgrade=dist force_apt_get=yes
+- name: "Upgrading all packages on Debian/Ubuntu servers"
+  apt: upgrade=dist force_apt_get=yes
