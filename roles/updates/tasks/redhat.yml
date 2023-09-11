@@ -1,4 +1,8 @@
 ---
+- name: "Upgrading all packages on RHEL"
+  become: yes
+  yum: name=* state=latest
+
 - name: "Installing Chrony"
   yum:
     name: 
@@ -18,5 +22,3 @@
     state: started
     enabled: yes
   
-- name: "Upgrading all packages on RHEL"
-  yum: name=* state=latest
