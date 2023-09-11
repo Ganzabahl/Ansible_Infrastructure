@@ -1,5 +1,6 @@
 --- 
-- hosts: all
+- name: Update on respective OS
+  hosts: all
   become: yes
   tasks:
   - name: Run updates on RHEL
