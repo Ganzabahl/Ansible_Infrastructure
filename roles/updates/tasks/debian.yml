@@ -1,4 +1,13 @@
 ---
+- name: "Updating apt repo and cache on all Debian/Ubuntu servers"
+  apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
+
+- name: "Wait for sudo"
+  shell:  while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1; do sleep 5; done;
+
+- name: "Upgrading all packages on Debian/Ubuntu servers"
+  apt: upgrade=dist force_apt_get=yes
+
 - name: "Installing ntp"
   apt:
     pkg:
@@ -18,8 +27,3 @@
     state: started
     enabled: yes
 
-- name: "Updating apt repo and cache on all Debian/Ubuntu servers"
-  apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
-
-- name: "Upgrading all packages on Debian/Ubuntu servers"
-  apt: upgrade=dist force_apt_get=yes
