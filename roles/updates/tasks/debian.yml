@@ -1,19 +1,22 @@
 ---
 - name: Only run "update_cache=yes" if the last one is more than 3600 seconds ago
+  become_user: root
   ansible.builtin.apt:
     update_cache: yes
     cache_valid_time: 3600
 
-- name: Pass options to dpkg on run
+- name: Update all packages to their latest version
+  become_user: root
   ansible.builtin.apt:
-    upgrade: dist
-    update_cache: yes
-    dpkg_options: 'force-confold,force-confdef'
+    name: "*"
+    state: latest
 
 - name: Remove useless packages from the cache
+  become_user: root
   ansible.builtin.apt:
     autoclean: yes
 
 - name: Remove dependencies that are no longer required
+  become_user: root
   ansible.builtin.apt:
     autoremove: yes
