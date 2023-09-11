@@ -1,72 +1,72 @@
 ---
-  - name: "Updating managed infrastructure"
-    hosts: all
-    become: true
-    user: "{{ user }}"
-    connection: ssh
-  
-    tasks:
+- name: "Updating managed infrastructure"
+  hosts: all
+  become: true
+  user: "{{ user }}"
+  connection: ssh
 
-    - name: Install ntp
-      apt:
-        pkg:
-          - ntp
-        state: latest
-      when: ansible_facts['os_family'] == 'Debian'
-  
-    - name: Install chrony on RedHat
-      yum:
-        name: 
-          - chrony
-        state: latest
-      when: ansible_facts['os_family'] == 'RedHat'
- 
-    - name: Install chrony on Suse
-      zypper:
-        name:
-          - chrony
-        state: latest
-      when: ansible_facts['os_family'] == 'Suse'
-  
-    - name: "Make sure the chrony.conf file is correct"
-      copy:
-        src: ./chrony.conf
-        dest: /etc/chrony.conf
-        owner: root
-        group: root
-      when: ansible_facts['os_family'] == 'RedHat' or ansible_facts['os_family'] == 'Suse'
- 
-    - name: restart ntp
-      service:
-        name: ntp
-        state: started
-        enabled: yes
-      when: ansible_facts['os_family'] == 'Debian'
-  
-    - name: restart chrony
-      service:
-        name: chronyd
-        state: started
-        enabled: yes
-      when: ansible_facts['os_family'] == 'RedHat'
+  tasks:
 
-    - name: Get all updates on Debian/Ubuntu
-      ansible.builtin.apt:
-        update_cache: true
-        autoremove: true
-        autoclean: true
-      when: ansible_facts['os_family'] == 'Debian'
+  - name: Install ntp
+    apt:
+      pkg:
+        - ntp
+      state: latest
+    when: ansible_facts['os_family'] == 'Debian'
 
-    - name: Upgrade all packages on Debian/Ubuntu
-      ansible.builtin.apt:
-        name: "*"
-        state: latest
-      when: ansible_facts['os_family'] == 'Debian'
-      
-    - name: upgrade all packages on CentOS
-      yum: name=* state=latest
-      when: ansible_facts['os_family'] == 'RedHat'
+  - name: Install chrony on RedHat
+    yum:
+      name: 
+        - chrony
+      state: latest
+    when: ansible_facts['os_family'] == 'RedHat'
 
-    - name: Update all packages on OpenSUSE/SUSE Linux
-      zypper: name=* state=latest
-      when: ansible_facts['os_family'] == 'Suse'
+  - name: Install chrony on Suse
+    zypper:
+      name:
+        - chrony
+      state: latest
+    when: ansible_facts['os_family'] == 'Suse'
+
+  - name: "Make sure the chrony.conf file is correct"
+    copy:
+      src: ./chrony.conf
+      dest: /etc/chrony.conf
+      owner: root
+      group: root
+    when: ansible_facts['os_family'] == 'RedHat' or ansible_facts['os_family'] == 'Suse'
+
+  - name: restart ntp
+    service:
+      name: ntp
+      state: started
+      enabled: yes
+    when: ansible_facts['os_family'] == 'Debian'
+
+  - name: restart chrony
+    service:
+      name: chronyd
+      state: started
+      enabled: yes
+    when: ansible_facts['os_family'] == 'RedHat'
+
+  - name: Get all updates on Debian/Ubuntu
+    ansible.builtin.apt:
+      update_cache: true
+      autoremove: true
+      autoclean: true
+    when: ansible_facts['os_family'] == 'Debian'
+
+  - name: Upgrade all packages on Debian/Ubuntu
+    ansible.builtin.apt:
+      name: "*"
+      state: latest
+    when: ansible_facts['os_family'] == 'Debian'
+    
+  - name: upgrade all packages on CentOS
+    yum: name=* state=latest
+    when: ansible_facts['os_family'] == 'RedHat'
+
+  - name: Update all packages on OpenSUSE/SUSE Linux
+    zypper: name=* state=latest
+    when: ansible_facts['os_family'] == 'Suse'
