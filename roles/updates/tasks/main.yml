@@ -1,4 +1,3 @@
----
 - name: Update OS Packages
   #    hosts: all
   become: yes
