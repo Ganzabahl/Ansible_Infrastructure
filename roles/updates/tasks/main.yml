@@ -1,6 +1,6 @@
 ---
   - name: Update OS Packages
-    hosts: all
+    #    hosts: all
     become: yes
   
     tasks:
