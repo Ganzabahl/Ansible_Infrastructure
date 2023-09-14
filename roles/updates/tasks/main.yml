@@ -1,5 +1,4 @@
 ---
-become: yes
 - name: Run updates on RHEL
   become: true
   import_tasks: redhat.yml

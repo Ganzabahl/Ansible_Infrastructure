@@ -1,11 +1,13 @@
 ---
 - name: "Install chrony on Suse"
+  become: true
   zypper:
     name:
       - chrony
     state: latest
 
 - name: "Making sure the chrony.conf file is correct"
+  become: true
   copy:
     src: ./chrony.conf
     dest: /etc/chrony.conf
@@ -13,10 +15,12 @@
     group: root
 
 - name: "Restarting chrony"
+  become: true
   service:
     name: chronyd
     state: started
     enabled: yes
 
 - name: "Updating all packages on OpenSUSE/SUSE Linux"
+  become: true
   zypper: name=* state=latest
