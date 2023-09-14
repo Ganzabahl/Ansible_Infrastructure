@@ -4,12 +4,14 @@
   yum: name=* state=latest
 
 - name: "Installing Chrony"
+  become: yes
   yum:
     name: 
       - chrony
     state: latest
 
 - name: "Making sure the chrony.conf file is correct"
+  become: yes
   copy:
     src: ./chrony.conf
     dest: /etc/chrony.conf
@@ -17,6 +19,7 @@
     group: root
 
 - name: "Restarting chrony"
+  become: yes
   service:
     name: chronyd
     state: started
