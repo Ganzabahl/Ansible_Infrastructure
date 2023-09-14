@@ -1,12 +1,16 @@
---- 
+---
+become: yes
 - name: Run updates on RHEL
+  become: true
   import_tasks: redhat.yml
   when: ansible_facts['os_family']|lower == 'redhat'
 
 - name: Run updates and check NTP on Debian
+  become: true
   import_tasks: debian.yml
   when: ansible_facts['os_family']|lower == 'debian'
 
 - name: Run updates and check NTP on OpenSUSE
+  become: true
   import_tasks: suse.yml
   when: ansible_facts['os_family']|lower == 'suse'
