@@ -1,5 +1,6 @@
 ---
-- become: true
+- hosts: all
+  become: true
   
   tasks:
     - name: Only run "update_cache=yes" if the last one is more than 3600 seconds ago
