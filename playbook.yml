@@ -1,6 +1,8 @@
 ---
-  - name: The update role applies to all servers
-    hosts: all
-    become: true
-    roles:
+- name: The update role applies to all servers
+  hosts: all
+  user: root
+  become: yes
+  
+  roles:
     - updates
