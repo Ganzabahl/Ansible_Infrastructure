@@ -2,8 +2,7 @@
 - name: Run updates on RHEL
   become: true
   import_tasks: redhat.yml
-  when: (ansible_facts['os_family']|lower == 'redhat')
-  #when: (ansible_facts['os_family']|lower == 'redhat') or (ansible_facts['os_family']|lower == 'rocky')
+  when: (ansible_facts['os_family']|lower == 'redhat') or (ansible_facts['os_family']|lower == 'rocky')
 
 - name: Run updates and check NTP on Debian
   become: true
