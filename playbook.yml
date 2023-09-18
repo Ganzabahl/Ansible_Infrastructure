@@ -1,7 +1,6 @@
 ---
 - name: The update role applies to all servers
   hosts: all
-  user: root
   become: true
   
   roles:
