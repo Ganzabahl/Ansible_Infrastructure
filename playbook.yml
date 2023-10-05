@@ -5,3 +5,11 @@
   
   roles:
     - updates
+
+- name : Servers that should have docker ce installed
+  hosts: dockerceServers
+  become: true
+
+  roles:
+    - role: dockerce
+      
