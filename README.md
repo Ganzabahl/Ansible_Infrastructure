@@ -5,6 +5,7 @@ This repository will be expanded over time.
 There is a stand-alone playbook for automatic updating of several distributions. 
 
 For a more streamlined approach the role "updates", is being added.
+Added the role "dockerce" too. This one will require you to add the respective servers in your inventory file to "dockerceServer" (or renaming the "tag").
 
 
 ## Note: 
