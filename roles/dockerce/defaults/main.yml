@@ -1,0 +1,6 @@
+---
+#docker_version: {{dockerversion}} #You can set this in variables
+docker_user: "docker"
+docker_group: "docker"
+
+docker_proxy_env: []
