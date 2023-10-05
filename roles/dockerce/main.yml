@@ -1,0 +1,161 @@
+---
+- name: Check environment for role support
+  fail:
+        msg: "This role only supports RedHat based systems with version >= 7"
+  when: ansible_os_family != 'RedHat' or ( ansible_distribution_major_version is version_compare('7', '<') )
+
+- name: Install pre-reqs for the ansible controller
+  pip:
+        name: "docker-py"
+        state: present
+  delegate_to: localhost
+  become: yes
+
+- name: Install pre-reqs of the docker repo
+  yum:
+        pkg: "yum-utils,device-mapper-persistent-data,lvm2"
+        state: present
+  become: yes
+
+- name: Check whether the requested docker version is installed
+  yum:
+        list: "docker-ce{{ docker_version_to_install }}"
+  register: docker_yum_packages
+
+- name: Setup a variable to indicate whether we have docker installed
+  set_fact:
+        dockerInstalled: "{{ item }}"
+  with_items: "{{ docker_yum_packages | json_query(jsonquery) }}"
+  vars:
+        jsonquery: "results[?yumstate=='installed']"
+
+- name: Uninstall all previous system wide docker versions
+  when: dockerInstalled is not defined
+  package:
+        pkg: "{{ item }}"
+        state: absent
+  loop:
+        - docker
+        - docker-client
+        - docker-client-latest
+        - docker-common
+        - docker-latest
+        - docker-latest-logrotate
+        - docker-logrotate
+        - docker-selinux
+        - docker-engine-selinux
+        - docker-engine
+
+- name: Install the RPM gpg key
+  rpm_key:
+        key: "https://download.docker.com/linux/{{ ansible_distribution | lower }}/gpg"
+        state: present
+
+# - name: Add the stable docker repository
+#   yum_repository:
+#     name: docker-ce
+#     state: present
+#     description: Docker CE Repository
+#     baseurl: "https://download.docker.com/linux/{{ ansible_distribution | lower }}/docker-ce.repo"
+#     gpgkey: "https://download.docker.com/linux/{{ ansible_distribution | lower }}/gpg"
+
+- name: Download docker repo file
+  get_url:
+        url: "https://download.docker.com/linux/{{ ansible_distribution | lower }}/docker-ce.repo"
+        dest: /etc/yum.repos.d/docker-ce.repo
+        mode: 0644
+        owner: root
+        group: root
+  become: true
+
+- name: Install the docker engine
+  package:
+        pkg: "{{ item }}{{ docker_version_to_install }}"
+        state: "present"
+        update_cache: true
+  loop:
+        - docker-ce
+        - docker-ce-cli
+
+- name: Install the common container interface
+  package:
+        pkg: "containerd.io"
+        state: "present"
+        update_cache: true
+
+- name: Create a group for docker
+  group:
+        name: "{{ docker_group }}"
+        state: "present"
+
+- name: Create a system user to run docker
+  user:
+        name: "{{ docker_user }}"
+        state: "present"
+        group: "{{ docker_group }}"
+        createhome: "no"
+        system: "yes"
+        comment: "A user dedicated to run the docker engine"
+
+- name: Store the current user
+  become: yes
+  set_fact:
+        current_user: "{{ ansible_env.SUDO_USER }}"
+
+- name: Add the current user to the docker group
+  become: yes
+  user:
+        name: "{{ current_user }}"
+        groups: "{{ docker_group }}"
+        state: "present"
+
+- name: Create a docker-client config folder
+  become: no
+  file:
+        path: "/home/{{ current_user }}/.docker"
+        state: directory
+
+- name: Add a proxy config for the docker-client
+  when: docker_proxy_env is defined and docker_proxy_env.http_proxy is defined
+  become: no
+  template:
+        src: "config.json.j2"
+        dest: "/home/{{ current_user }}/.docker/proxy-config.json"
+        mode: 0755
+
+- name: Enable the docker service to boot on startup
+  become: yes
+  service:
+        name: "docker"
+        state: started
+        enabled: yes
+
+- name: Ensure docker can be provisioned via ansible (pull an image)
+  docker_image:
+        name: hello-world
+
+- name: Ensure docker can be provisioned via ansible (run a named image)
+  docker_container:
+        name: ansible-test-container
+        image: hello-world
+        state: started
+
+- name: Wait for a bit until the container starts
+  wait_for:
+        timeout: 5
+
+- name: Ensure the container is stopped
+  docker_container:
+        name: ansible-test-container
+        state: stopped
+
+- name: Remove the container
+  docker_container:
+        name: ansible-test-container
+        state: absent
+
+- name: Remove the hello-world image
+  docker_image:
+        name: hello-world
+        state: absent
+
