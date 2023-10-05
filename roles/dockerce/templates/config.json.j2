@@ -1,0 +1,9 @@
+{
+    "proxies": {
+        "default": {
+            "httpProxy": "{{ docker_proxy_env.http_proxy }}",
+            "httpsProxy": "{{ docker_proxy_env.https_proxy | default('') }}",
+            "noProxy": "{{ docker_proxy_env.no_proxy | default('') }}"
+        }
+    }
+}
