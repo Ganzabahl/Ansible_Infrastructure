@@ -2,7 +2,6 @@
 - name: The update role applies to all servers
   hosts: all
   become: true
-  become_method: sudo
   
   roles:
     - updates
@@ -10,7 +9,6 @@
 - name : Servers that should have docker ce installed
   hosts: dockerceServers
   become: true
-  become_method: sudo
 
   roles:
     - role: dockerce
